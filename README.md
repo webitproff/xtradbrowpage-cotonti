@@ -2,7 +2,18 @@
 
 ## The plugin "xtradbrowpage" changes the storage strategy: a physically independent cot_xtradbrowpage table is created for all extrapoles registered through it.
 
+[![Version](https://img.shields.io/badge/version-2.7.8-green.svg)](https://github.com/webitproff/xtradbrowpage-cotonti/releases)
+[![Cotonti Compatibility](https://img.shields.io/badge/Cotonti_Siena-0.9.26-orange.svg)](https://github.com/Cotonti/Cotonti)
+[![PHP](https://img.shields.io/badge/PHP-8.4-purple.svg)](https://www.php.net/releases/8_4_0.php)
+[![MySQL](https://img.shields.io/badge/MySQL-8.4-blue.svg)](https://www.mysql.com/)
+[![Bootstrap v5.3.8](https://img.shields.io/badge/Bootstrap-v5.3.8-blueviolet.svg)](https://getbootstrap.com/)
+[![License](https://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/webitproff/xtradbrowpage-cotonti/blob/main/LICENSE)
+
+
 <img width="1536" height="1024" alt="The Plugin Custom Extrafields for Pages module of Cotonti CMF" src="https://github.com/user-attachments/assets/c76cffa4-16ad-44b2-ae02-e0ab671db16f" />
+
+
+
 
 ### What the Plugin Does
 
