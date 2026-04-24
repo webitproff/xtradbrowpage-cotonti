@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `cot_xtradbrowpage` (
 | Field Name | Type | HTML Template | Variants / Parameters | Description |
 | event\_name | input | `<input class="form-control" type="text" name="{$name}" value="{$value}" maxlength="255">` |     | Event name |
 | event\_description | textarea | `<textarea class="form-control" name="{$name}" rows="{$rows}" cols="{$cols}" maxlength="255">{$value}</textarea>` |     | Event description |
-| event\_start | datetime | `<div class="row g-2"> ... </div>` (see dump) | 2024,2030,d.m.Y H:i | Event start |
+| event\_start | datetime | `<div class="row g-2"> ... </div>` (**[see dump](https://github.com/webitproff/xtradbrowpage-cotonti/blob/main/demo-sql-dump-only-read.sql)**) | 2024,2030,d.m.Y H:i | Event start |
 | event\_ticketprice | double | `<input class="form-control" type="text" name="{$name}" value="{$value}" maxlength="255">` |     | Ticket price |
 | event\_seson | select | `<select class="form-select" name="{$name}">{$options}</select>` | unknown,winter,summer,autumn,spring | Season |
 
