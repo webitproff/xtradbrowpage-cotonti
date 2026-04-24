@@ -237,3 +237,14 @@ Create fields through the admin panel: event\_name, event\_description, event\_s
 *   If a page is created without immediately saving extra fields, the record in `cot_xtradbrowpage` will appear on the first update of the page via the edit form.
 *   For bulk data insertion, use the `xtradbrowpage_save()` API function.
 *   Cache clearing is not required, but if you encounter display issues, clear the cache in the admin panel.
+
+## HELP & SUPPORT
+
+*  **[Forum Topic](https://abuyfile.com/ru/forums/cotonti/original/extrafields/topic205)**
+*  **[Forum SECTION](https://abuyfile.com/ru/forums/cotonti/original/extrafields)**
+
+
+### It may also be interesting and useful to you:
+*  **[Integrating Extrafields into the I18n plugin in Cotonti CMF](https://abuyfile.com/en/cotonti/authorial-plugins/integraciya-extrafields-v-plagin-i18n-v-cotonti-cmf)**
+*  **[Userfields Plugin for CMF Cotonti](https://abuyfile.com/en/market/cotonti/plugs/userfields)**
+*  **[Localization (multilingualism) of Extra-fields. Instruction manual](https://abuyfile.com/en/cotonti/reading/lokalizaciya-ekstrapolej-v-cotonti-poshagovaya-polnaya-instrukciya-na-primere-polya-status-tovara)**
