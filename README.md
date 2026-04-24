@@ -15,6 +15,8 @@
 *   When a page is deleted, the corresponding record in `cot_xtradbrowpage` is removed either by cascade or explicitly (`page.edit.delete.done` hook).
 *   Provides three API functions for manual operations.
 
+## 🎯 [**Читать на русском и смотреть в маркетплейсе расширений**](https://abuyfile.com/ru/market/cotonti/xtra-db-row-page)  
+
 ### Requirements
 
 *   Cotonti 0.9.26+
