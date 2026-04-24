@@ -4,8 +4,8 @@
 Code=xtradbrowpage
 Name=Custom Extrafields for Pages
 Description=Adds custom extrafields to individual pages stored in separate table
-Version=1.0.0
-Date=2026-04-23
+Version=2.7.8
+Date=2026-04-24
 Author=webitproff
 Copyright=Copyright (c) 2026 webitproff
 Notes=BSD License
