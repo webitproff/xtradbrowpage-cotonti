@@ -12,7 +12,7 @@ Hooks=page.tags
  *
  * Date: Apr 25Th, 2026
  * @package xtradbrowpage
- * @version 2.7.8
+ * @version 2.7.9
  * @author webitproff
  * @copyright Copyright (c) webitproff 2026 | https://github.com/webitproff/xtradbrowpage-cotonti
  * @license BSD
@@ -22,12 +22,16 @@ Hooks=page.tags
  * 
  * Динамический вывод всех полей:
  * 
- * <!-- BEGIN: XTRA_EXTRAFLD -->
- * <div class="extrafield">
- *     <strong>{XTRA_EXTRAFIELD_TITLE}:</strong>
- *     <span>{XTRA_EXTRAFIELD_VALUE}</span>
- * </div>
- * <!-- END: XTRA_EXTRAFLD -->
+ * <!-- IF {PHP|cot_plugin_active('xtradbrowpage')} -->
+ *    <!-- BEGIN: XTRA_EXTRAFLD -->
+ *       <!-- IF {XTRA_EXTRAFIELD_VALUE} --> 
+ *          <div class="extrafield-{XTRA_EXTRAFIELD_NAME}">
+ *             <strong>{XTRA_EXTRAFIELD_TITLE}:</strong>
+ *             <span>{XTRA_EXTRAFIELD_VALUE}</span>
+ *          </div>
+ *       <!-- ENDIF -->
+ *    <!-- END: XTRA_EXTRAFLD -->
+ * <!-- ENDIF -->
  * 
  * Ручной (индивидуальный) вывод конкретного поля:
  * 
@@ -56,6 +60,7 @@ if (!empty($pag['page_id'])) {
                     'XTRA_' . $tag . '_VALUE'  => $value,
                     'XTRA_EXTRAFIELD_TITLE'    => cot_extrafield_title($exfld, 'xtra_'),
                     'XTRA_EXTRAFIELD_VALUE'    => cot_build_extrafields_data('xtra', $exfld, $value, $pag['page_parser']),
+                    'XTRA_EXTRAFIELD_NAME'     => $exfld['field_name'],   // необязательное, но информативное
                 ]);
                 $t->parse('MAIN.XTRA_EXTRAFLD');
             }
@@ -69,6 +74,7 @@ if (!empty($pag['page_id'])) {
                     'XTRA_' . $tag . '_VALUE' => '',
                     'XTRA_EXTRAFIELD_TITLE'   => '',
                     'XTRA_EXTRAFIELD_VALUE'   => '',
+                    'XTRA_EXTRAFIELD_NAME'    => '',   // для сброса. необязательное, но информативное
                 ]);
                 $t->parse('MAIN.XTRA_EXTRAFLD');
             }
