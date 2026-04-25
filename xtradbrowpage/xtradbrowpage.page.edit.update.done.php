@@ -32,5 +32,7 @@ if (isset($id) && $id > 0) {
             $data[$fieldName] = cot_import_extrafields($inputName, $exfld, 'P', $oldValue, 'xtra_');
         }
         xtradbrowpage_save($id, $data);
+        // === ВАЖНО: перемещаем загруженные файлы в целевую папку ===
+        cot_extrafield_movefiles();
     }
 }
