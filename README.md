@@ -9,6 +9,10 @@
 [![Bootstrap v5.3.8](https://img.shields.io/badge/Bootstrap-v5.3.8-blueviolet.svg)](https://getbootstrap.com/)
 [![License](https://img.shields.io/badge/license-BSD-blue.svg)](https://github.com/webitproff/xtradbrowpage-cotonti/blob/main/LICENSE)
 
+---
+> On August 10, 2026, the xtradbrowpage plugin gained **[integration](https://github.com/webitproff/pagemassedit-cotonti/blob/main/INTEGRATION.md)** with the mass page editing plugin — **["Page Mass Edit"](https://github.com/webitproff/pagemassedit-cotonti/tree/main)**
+---
+
 
 <img width="1536" height="1024" alt="The Plugin Custom Extrafields for Pages module of Cotonti CMF" src="https://github.com/user-attachments/assets/c76cffa4-16ad-44b2-ae02-e0ab671db16f" />
 
@@ -26,12 +30,15 @@
 *   When a page is deleted, the corresponding record in `cot_xtradbrowpage` is removed either by cascade or explicitly (`page.edit.delete.done` hook).
 *   Provides three API functions for manual operations.
 
-## 🎯 [**Читать на русском и смотреть в маркетплейсе расширений**](https://abuyfile.com/ru/market/cotonti/xtra-db-row-page)  
+---
+## 🎯 [**Читать на русском и смотреть в маркетплейсе расширений**](https://abuyfile.com/ru/market/cotonti/xtra-db-row-page)   
 
+10 августа 2026 г плагину xtradbrowpage добавлена **[интеграция](https://github.com/webitproff/pagemassedit-cotonti/blob/main/INTEGRATION.md)** с плагином массового редактирования статей, - **["Page Mass Edit"](https://github.com/webitproff/pagemassedit-cotonti/tree/main)**
+---
 ### Requirements
 
-*   Cotonti 0.9.26+
-*   PHP 8.4+
+*   Cotonti 1+
+*   PHP 8.5+
 *   The "page" module must be installed
 
  [**permanent link to the current plugin source code on GitHub**](https://github.com/webitproff/xtradbrowpage-cotonti) 
