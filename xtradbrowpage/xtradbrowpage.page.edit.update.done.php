@@ -9,9 +9,9 @@
  * Сохранение данных после обновления страницы: plugins/xtradbrowpage/xtradbrowpage.page.edit.update.done.php
  * Хук page.edit.update.done. Вызывается после успешного обновления страницы. Сохраняет значения extrafields в cot_xtradbrowpage.
  *
- * Date: Sep 29Th, 2026
+ * Date: Nov 13Th, 2026
  * @package xtradbrowpage
- * @version 2.7.8
+ * @version 2.7.9
  * @author webitproff
  * @copyright Copyright (c) webitproff 2026 | https://github.com/webitproff/xtradbrowpage-cotonti
  * @license BSD
@@ -25,26 +25,49 @@ if (isset($id) && $id > 0) {
     if (!empty($extrafields)) {
         $xtra_data = xtradbrowpage_load($id) ?: [];
         $data = [];
-		foreach ($extrafields as $exfld) {
-			$fieldName = $exfld['field_name'];
-			$inputName = 'rxtra_' . $fieldName;
-			$oldValue  = $xtra_data[$fieldName] ?? '';
 
-			// Импортируем только если поле реально пришло в запросе:
-			// - обычные поля/чекбоксы/чеклистбоксы/селекты -> $_POST
-			// - файловые поля -> либо $_POST (удаление), либо $_FILES (загрузка)
+		$hasSubmittedExtrafield = false;
+
+		// Проверяем, пришло ли хотя бы одно дополнительное поле.
+		foreach ($extrafields as $exfld) {
+			$inputName = 'rxtra_' . $exfld['field_name'];
+
 			if (
 				isset($_POST[$inputName]) ||
 				isset($_POST['rdel_' . $inputName]) ||
 				(isset($_FILES[$inputName]) && $_FILES[$inputName]['error'] !== UPLOAD_ERR_NO_FILE)
 			) {
-				$data[$fieldName] = cot_import_extrafields($inputName, $exfld, 'P', $oldValue, 'xtra_');
-			} else {
-				// Поле не отправлено — сохраняем прежнее значение, не трогаем ядро
-				$data[$fieldName] = $oldValue;
+				$hasSubmittedExtrafield = true;
+				break;
 			}
 		}
-        xtradbrowpage_save($id, $data);
+
+		foreach ($extrafields as $exfld) {
+			$fieldName = $exfld['field_name'];
+			$fieldType = $exfld['field_type'] ?? '';
+			$inputName = 'rxtra_' . $fieldName;
+			$oldValue  = $xtra_data[$fieldName] ?? '';
+
+			if (
+				isset($_POST[$inputName]) ||
+				isset($_POST['rdel_' . $inputName]) ||
+				(isset($_FILES[$inputName]) && $_FILES[$inputName]['error'] !== UPLOAD_ERR_NO_FILE)
+			) {
+				$data[$fieldName] = cot_import_extrafields(
+					$inputName,
+					$exfld,
+					'P',
+					$oldValue,
+					'xtra_'
+				);
+			} elseif ($fieldType === 'checkbox' && $hasSubmittedExtrafield) {
+				// Checkbox не передаётся в POST, если он снят.
+				$data[$fieldName] = 0;
+			}
+		}
+		if (!empty($data)) {
+			xtradbrowpage_save($id, $data);
+		}
         // === ВАЖНО: перемещаем загруженные файлы в целевую папку ===
         cot_extrafield_movefiles();
     }
