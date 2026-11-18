@@ -325,8 +325,15 @@
     position: sticky;
     left: 80px;
     z-index: 3;
-    min-width: 240px;
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
     background-color: #d1e7dd;
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    font-size: 0.85em;
+    line-height: 1.3;
 }
 .massedit-table thead th:first-child {
     background-color: #f8f9fa;
