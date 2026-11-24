@@ -252,6 +252,258 @@ Create fields through the admin panel: event\_name, event\_description, event\_s
 
 
 ### It may also be interesting and useful to you:
+
 *  **[Integrating Extrafields into the I18n plugin in Cotonti CMF](https://abuyfile.com/en/cotonti/authorial-plugins/integraciya-extrafields-v-plagin-i18n-v-cotonti-cmf)**
-*  **[Userfields Plugin for CMF Cotonti](https://abuyfile.com/en/market/cotonti/plugs/userfields)**
+
 *  **[Localization (multilingualism) of Extra-fields. Instruction manual](https://abuyfile.com/en/cotonti/reading/lokalizaciya-ekstrapolej-v-cotonti-poshagovaya-polnaya-instrukciya-na-primere-polya-status-tovara)**
+
+___
+
+
+# Плагин Custom Extrafields for Pages для Cotonti CMF, PHP 8.5+, MySQL 8.4
+
+Плагин `xtradbrowpage` изменяет стратегию хранения данных: для всех дополнительных полей, зарегистрированных через него, создаётся физически отдельная таблица `cot_xtradbrowpage`.
+
+**Версия:** 3.1.0\
+**Совместимость:** Cotonti v.1\
+**PHP:** 8.5+\
+**MySQL:** 8.4\
+**Bootstrap:** v5.3.8\
+**Лицензия:** BSD
+
+---
+
+10 августа 2026 года плагин `xtradbrowpage` получил интеграцию с плагином массового редактирования статей — **Page Mass Edit**.
+
+## Что делает плагин
+
+- Создаёт отдельную таблицу `cot_xtradbrowpage` для хранения дополнительных полей страниц. Каждая запись связывается со страницей через `itempagid = page_id` с каскадным удалением.
+- Регистрирует расположение `cot_xtradbrowpage` в административной панели в разделе «Расширения → Дополнительные поля».
+- При редактировании страницы автоматически выводит все активные дополнительные поля этого расположения (поля формы с префиксом `rxtra_`, теги `{PAGEEDIT_FORM_XTRA_FIELDNAME}`). Сохраняет их при обновлении страницы.
+- При просмотре страницы предоставляет теги `{XTRA_FIELDNAME}`, `{XTRA_FIELDNAME_TITLE}`, `{XTRA_FIELDNAME_VALUE}`, а также блок `<!-- BEGIN: XTRA_EXTRAFLD -->` для перебора всех полей.
+- В списках страниц (через `cot_generate_pagetags()`) становятся доступны теги с префиксом `{LIST_ROW_XTRA_...}`.
+- В секции `<head>` (хук `header.tags`) можно использовать тег `{XTRA_HEADER_FIELDNAME}`.
+- При удалении страницы соответствующая запись в `cot_xtradbrowpage` удаляется автоматически через каскадное удаление или явно через хук `page.edit.delete.done`.
+- Предоставляет три API-функции для ручной работы с данными.
+
+---
+
+## Требования
+
+- Cotonti 1+
+- PHP 8.5+
+- Установленный модуль `page`
+
+[**Постоянная ссылка на актуальный исходный код плагина на GitHub**](https://github.com/webitproff/xtradbrowpage-cotonti)
+
+## Установка
+
+1. Скопируйте папку плагина в `/plugins/xtradbrowpage`.
+2. В административной панели перейдите в «Расширения → Плагины» и нажмите «Установить».
+
+SQL-запрос для установки (выполняется автоматически):
+
+```
+CREATE TABLE IF NOT EXISTS `cot_xtradbrowpage` (
+    `itempagid` int UNSIGNED NOT NULL,
+    PRIMARY KEY (`itempagid`),
+    CONSTRAINT `fk_xtradbrowpage_pages` FOREIGN KEY (`itempagid`) REFERENCES `cot_pages` (`page_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+## Добавление дополнительных полей
+
+1. В административной панели откройте «Расширения → Дополнительные поля».
+2. Выберите расположение `cot_xtradbrowpage` (оно появится после установки плагина).
+3. Создайте поля нужных типов. Допустимые типы: `input`, `textarea`, `select`, `datetime`, `double` и любые другие типы, поддерживаемые ядром Cotonti.
+
+### Пример набора полей (из дампа базы данных)
+
+| Название поля       | Тип      | HTML-шаблон                                                                                                                                | Варианты / параметры                  | Описание                    |
+| ------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------- | --------------------------- |
+| `event_name`        | input    | `<input class="form-control" type="text" name="{$name}" value="{$value}" maxlength="255">`                                                 | —                                     | Название события            |
+| `event_description` | textarea | `<textarea class="form-control" name="{$name}" rows="{$rows}" cols="{$cols}" maxlength="255">{$value}</textarea>`                          | —                                     | Описание события            |
+| `event_start`       | datetime | `<div class="row g-2"> ... </div>` ([см. дамп](https://github.com/webitproff/xtradbrowpage-cotonti/blob/main/demo-sql-dump-only-read.sql)) | `2024,2030,d.m.Y H:i`                 | Дата и время начала события |
+| `event_ticketprice` | double   | `<input class="form-control" type="text" name="{$name}" value="{$value}" maxlength="255">`                                                 | —                                     | Стоимость билета            |
+| `event_seson`       | select   | `<select class="form-select" name="{$name}">{$options}</select>`                                                                           | `unknown,winter,summer,autumn,spring` | Сезон                       |
+
+## Шаблоны и теги
+
+### 1. Форма редактирования (`page.edit.tpl`)
+
+Блок для автоматического вывода всех полей:
+
+```
+<!-- BEGIN: XTRA_EXTRAFLD -->
+<div class="form-group">
+    <label>{PAGEEDIT_FORM_XTRA_EXTRAFLD_TITLE}</label>
+    {PAGEEDIT_FORM_XTRA_EXTRAFLD}
+</div>
+<!-- END: XTRA_EXTRAFLD -->
+```
+
+Отдельные поля (пример для `event_name`):
+
+```
+<div class="mb-3">
+    <label>{PAGEEDIT_FORM_XTRA_EVENT_NAME_TITLE}</label>
+    {PAGEEDIT_FORM_XTRA_EVENT_NAME}
+</div>
+```
+
+### 2. Просмотр страницы (`page.tpl`)
+
+Блок для вывода всех полей:
+
+```
+<!-- BEGIN: XTRA_EXTRAFLD -->
+<div class="extrafield">
+    <strong>{XTRA_EXTRAFIELD_TITLE}:</strong>
+    <span>{XTRA_EXTRAFIELD_VALUE}</span>
+</div>
+<!-- END: XTRA_EXTRAFLD -->
+```
+
+Отдельное поле:
+
+```
+<!-- IF {XTRA_EVENT_START} -->
+    <p>{XTRA_EVENT_START_TITLE}: {XTRA_EVENT_START}</p>
+<!-- ENDIF -->
+```
+
+Значения форматируются в соответствии с типом поля (например, `datetime` будет отформатирован как `d.m.Y H:i`).
+
+### 3. Списки страниц (`page.list.tpl`, `news.tpl` и т. д.)
+
+Используйте теги `{LIST_ROW_XTRA_FIELDNAME}`, например:
+
+```
+<!-- IF {LIST_ROW_XTRA_EVENT_NAME} -->
+    <small>{LIST_ROW_XTRA_EVENT_NAME_TITLE}: {LIST_ROW_XTRA_EVENT_NAME}</small>
+<!-- ENDIF -->
+```
+
+Эти теги добавляются через хук `pagetags.main` внутри функции `cot_generate_pagetags()`.
+
+### 4. Секция Head (`header.tpl`)
+
+```
+<!-- IF {XTRA_HEADER_EVENT_NAME} -->
+    <meta name="event" content="{XTRA_HEADER_EVENT_NAME}">
+<!-- ENDIF -->
+```
+
+## API для разработчиков
+
+Функции находятся в файле `/plugins/xtradbrowpage/inc/xtradbrowpage.functions.php`.
+
+### Получение всех зарегистрированных полей
+
+```
+$fields = xtradbrowpage_getExtrafields(); // массив из Cot::$extrafields['cot_xtradbrowpage']
+```
+
+### Загрузка записи для страницы
+
+```
+$data = xtradbrowpage_load($page_id); // возвращает ассоциативный массив с ключами field_name
+```
+
+### Сохранение (INSERT или UPDATE)
+
+```
+$values = [
+    'event_name' => 'New event',
+    'event_start' => 1715011200, // временная метка UNIX
+    'event_ticketprice' => 100.50
+];
+
+xtradbrowpage_save($page_id, $values);
+```
+
+## Хуки плагина и их назначение
+
+| Хук                       | Файл                                        | Действие                                                                  |
+| ------------------------- | ------------------------------------------- | ------------------------------------------------------------------------- |
+| `admin.extrafields.first` | `xtradbrowpage.admin.extrafields.first.php` | Добавляет расположение в список разрешённых дополнительных полей          |
+| `header.tags`             | `xtradbrowpage.header.tags.php`             | Назначает теги `XTRA_HEADER_*` для текущей страницы                       |
+| `page.edit.tags`          | `xtradbrowpage.page.edit.tags.php`          | Выводит поля в форме редактирования и обрабатывает блок `XTRA_EXTRAFLD`   |
+| `page.edit.update.done`   | `xtradbrowpage.page.edit.update.done.php`   | Сохраняет отправленные значения в `cot_xtradbrowpage`                     |
+| `page.edit.delete.done`   | `xtradbrowpage.page.edit.delete.done.php`   | Явно удаляет запись страницы                                              |
+| `page.tags`               | `xtradbrowpage.page.tags.php`               | Назначает теги для страницы просмотра и обрабатывает блок `XTRA_EXTRAFLD` |
+| `pagetags.main`           | `xtradbrowpage.pagetags.php`                | Добавляет теги `LIST_ROW_XTRA_*` в `$temp_array`                          |
+
+## Практический пример: создание событий
+
+### 1. Добавление полей
+
+Создайте через административную панель поля: `event_name`, `event_description`, `event_start`, `event_ticketprice`, `event_seson`, используя параметры из таблицы выше.
+
+### 2. Шаблон редактирования
+
+```
+<!-- В page.edit.tpl -->
+<div class="card mt-3">
+    <div class="card-header">Параметры события</div>
+    <div class="card-body">
+        <!-- BEGIN: XTRA_EXTRAFLD -->
+        <div class="mb-3">
+            <label class="form-label">{PAGEEDIT_FORM_XTRA_EXTRAFLD_TITLE}</label>
+            {PAGEEDIT_FORM_XTRA_EXTRAFLD}
+        </div>
+        <!-- END: XTRA_EXTRAFLD -->
+    </div>
+</div>
+```
+
+### 3. Шаблон просмотра
+
+```
+<!-- В page.tpl -->
+<!-- IF {XTRA_EVENT_NAME} -->
+<div class="event-details">
+    <h2>{XTRA_EVENT_NAME}</h2>
+    <!-- BEGIN: XTRA_EXTRAFLD -->
+    <p><strong>{XTRA_EXTRAFIELD_TITLE}:</strong> {XTRA_EXTRAFIELD_VALUE}</p>
+    <!-- END: XTRA_EXTRAFLD -->
+</div>
+<!-- ENDIF -->
+```
+
+### 4. Вывод в списке
+
+```
+<!-- В page.list.tpl внутри блока LIST_ROWS -->
+<div class="list-item">
+    <a href="{LIST_ROW_URL}">{LIST_ROW_TITLE}</a>
+    <!-- IF {LIST_ROW_XTRA_EVENT_START} -->
+        <span class="date">{LIST_ROW_XTRA_EVENT_START}</span>
+    <!-- ENDIF -->
+</div>
+```
+
+## Особенности типов полей
+
+- **datetime**: хранится как целое число (временная метка UNIX). В форме редактирования предоставляются выпадающие списки. При выводе значение форматируется согласно параметру `field_params` (например, `d.m.Y H:i`).
+- **select**: варианты задаются через значения, разделённые запятыми, в `field_variants`; выбранное значение сохраняется как строка.
+- **double**: сохраняется как число с плавающей точкой.
+- Все поля экранируются при выводе через `cot_build_extrafields_data()` и `htmlspecialchars()`.
+
+## Примечания
+
+- Плагин не добавляет столбцы в таблицу `cot_pages`.
+- Если страница создана без немедленного сохранения дополнительных полей, запись в `cot_xtradbrowpage` появится при первом обновлении страницы через форму редактирования.
+- Для массовой вставки данных используйте API-функцию `xtradbrowpage_save()`.
+- Очистка кэша не требуется, но если возникнут проблемы с отображением, очистите кэш в административной панели.
+
+## Помощь и поддержка
+
+- [Тема на форуме](https://abuyfile.com/ru/forums/cotonti/original/extrafields/topic205)
+- [Раздел форума](https://abuyfile.com/ru/forums/cotonti/original/extrafields)
+
+## Возможно, вам также будет интересно
+
+- [Интеграция дополнительных полей в плагин I18n в Cotonti CMF](https://abuyfile.com/en/cotonti/authorial-plugins/integraciya-extrafields-v-plagin-i18n-v-cotonti-cmf)
+- [Локализация дополнительных полей. Пошаговое руководство](https://abuyfile.com/en/cotonti/reading/lokalizaciya-ekstrapolej-v-cotonti-poshagovaya-polnaya-instrukciya-na-primere-polya-status-tovara)
+
