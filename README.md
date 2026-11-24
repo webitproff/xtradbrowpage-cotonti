@@ -257,7 +257,20 @@ Create fields through the admin panel: event\_name, event\_description, event\_s
 
 *  **[Localization (multilingualism) of Extra-fields. Instruction manual](https://abuyfile.com/en/cotonti/reading/lokalizaciya-ekstrapolej-v-cotonti-poshagovaya-polnaya-instrukciya-na-primere-polya-status-tovara)**
 
-___
+#### Similar Extensions
+
+ -  **["Page Mass Edit"](https://github.com/webitproff/pagemassedit-cotonti/tree/main)**  
+ -  **["Extrafields Market Custom"](https://github.com/webitproff/xtradbrowmarket-cotonti)**  
+ -  **["Extrafields Users Custom"](https://github.com/webitproff/xtradbrowusers-cotonti)**  
+ -  **["Extensions Filter for Cotonti"](https://github.com/webitproff/extensionfilter-cotonti)**  
+ -  **["Drag & Drop Structure"](https://github.com/webitproff/dragstructure-cotonti)**  
+ 
+
+___  
+---  
+> RUSSIAN
+---  
+
 
 
 # Плагин Custom Extrafields for Pages для Cotonti CMF, PHP 8.5+, MySQL 8.4
@@ -507,3 +520,11 @@ xtradbrowpage_save($page_id, $values);
 - [Интеграция дополнительных полей в плагин I18n в Cotonti CMF](https://abuyfile.com/en/cotonti/authorial-plugins/integraciya-extrafields-v-plagin-i18n-v-cotonti-cmf)
 - [Локализация дополнительных полей. Пошаговое руководство](https://abuyfile.com/en/cotonti/reading/lokalizaciya-ekstrapolej-v-cotonti-poshagovaya-polnaya-instrukciya-na-primere-polya-status-tovara)
 
+#### Похожижие расширения
+
+ -  **["Page Mass Edit"](https://github.com/webitproff/pagemassedit-cotonti/tree/main)**  
+ -  **["Extrafields Market Custom"](https://github.com/webitproff/xtradbrowmarket-cotonti)**  
+ -  **["Extrafields Users Custom"](https://github.com/webitproff/xtradbrowusers-cotonti)**  
+ -  **["Extensions Filter for Cotonti"](https://github.com/webitproff/extensionfilter-cotonti)**  
+ -  **["Drag & Drop Structure"](https://github.com/webitproff/dragstructure-cotonti)**  
+ 
